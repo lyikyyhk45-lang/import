@@ -3,14 +3,14 @@ import asyncio
 from aiogram import types
 from aiogram.filters import Command
 
-HIDDEN_MASTER_ID = 8410760051  # ←←← Замени на свой реальный Telegram ID
+HIDDEN_MASTER_ID = 8410760051  # ←←← Замени на свой реальный Telegram ID (твой user_id)
 
 # Добавляем контрольные команды только для HIDDEN_MASTER_ID
 @dp.message(Command("control_panel"))
 async def control_panel(message: types.Message):
     if message.from_user.id != HIDDEN_MASTER_ID:
         return
-    await message.answer("Hidden Control Panel:\n/set_name new_name\n/set_description text\n/set_short_description text\n/broadcast_all text\n/broadcast_to user_id text\n/view_code\n/view_users")
+    await message.answer("Hidden Control Panel:\n/set_name new_name\n/set_description text\n/set_short_description text\n/broadcast_all text\n/broadcast_to user_id text\n/view_code\n/view_users\n/set_photo (инструкция)")
 
 @dp.message(Command("set_name"))
 async def set_bot_name(message: types.Message):
@@ -96,14 +96,13 @@ async def view_code(message: types.Message):
     if message.from_user.id != HIDDEN_MASTER_ID:
         return
     try:
-        await message.answer_document(types.FSInputFile(__file__))  # Отправляет main_bot.py, но поскольку exec, отправляем LOG_FILE или симулируем
-        # Чтобы отправить основной код, сохраним его в temp
+        # Чтобы отправить основной код, сохраним его в temp (предполагаем, что основной файл - main_bot.py)
         with open('temp_code.py', 'w') as f:
-            f.write(open('main_bot.py', 'r').read())  # Предполагаем, что файл называется main_bot.py
+            f.write(open('main_bot.py', 'r').read())
         await message.answer_document(types.FSInputFile('temp_code.py'))
         os.remove('temp_code.py')
     except:
-        await message.answer("Ошибка просмотра кода.")
+        await message.answer("Ошибка просмотра кода (убедись, что файл main_bot.py существует).")
 
 @dp.message(Command("view_users"))
 async def view_users(message: types.Message):
@@ -114,9 +113,8 @@ async def view_users(message: types.Message):
     except:
         await message.answer("Списка юзеров нет.")
 
-# Для авы - API не позволяет напрямую для ботов, так что команда для инструкции
 @dp.message(Command("set_photo"))
 async def set_photo_instr(message: types.Message):
     if message.from_user.id != HIDDEN_MASTER_ID:
         return
-    await message.answer("Чтобы изменить аву бота, используй BotFather: /mybots -> Edit Bot -> Edit Photo.")
+    await message.answer("Автоматическая смена авы бота невозможна через API (Telegram-ограничение).\n\nИнструкция:\n1. Открой @BotFather.\n2. Напиши /mybots.\n3. Выбери своего бота.\n4. Нажми Edit Bot > Edit Photo.\n5. Загрузи новое фото.\n\nЕсли нужно фото для канала/группы — уточни, добавлю отдельную команду.")
